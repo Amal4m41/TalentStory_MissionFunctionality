@@ -1,4 +1,6 @@
-class Task {
+import 'package:flutter/cupertino.dart';
+
+class Task with ChangeNotifier {
   final int taskId;
   final String taskName;
   final String createdDate;
@@ -7,6 +9,7 @@ class Task {
   final int missionId;
   final String taskContent; //will store the link to the doc stored location.
   final String targetDate;
+  final double taskWeightage;
 
   Task({
     required this.taskId,
@@ -16,6 +19,7 @@ class Task {
     required this.missionId,
     required this.taskContent,
     required this.targetDate,
+    required this.taskWeightage,
   });
 
   Task.fromJson(Map<String, dynamic> json)
@@ -25,7 +29,8 @@ class Task {
         createdBy = json['createdBy'],
         missionId = json['missionId'],
         taskContent = json['taskContent'],
-        targetDate = json['targetDate'];
+        targetDate = json['targetDate'],
+        taskWeightage = json['taskWeightage'];
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
@@ -36,6 +41,7 @@ class Task {
     data['missionId'] = missionId;
     data['taskContent'] = taskContent;
     data['targetDate'] = targetDate;
+    data['taskWeightage'] = taskWeightage;
     return data;
   }
 }

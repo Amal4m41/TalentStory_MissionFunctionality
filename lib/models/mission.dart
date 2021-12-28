@@ -7,6 +7,9 @@ class Mission with ChangeNotifier {
   final String
       createdBy; //will store the id of the user(user with category = mentor/professor/teacher)
   final String description;
+  final String
+      targetDate; //expected date of completion for the mission(i.e. all the tasks)
+  //add  trailing(percentage) and target date() for each mission.
 
   Mission({
     required this.missionId,
@@ -14,6 +17,7 @@ class Mission with ChangeNotifier {
     required this.createdDate,
     required this.createdBy,
     required this.description,
+    required this.targetDate,
   });
 
   Mission.fromJson(Map<String, dynamic> json)
@@ -21,7 +25,8 @@ class Mission with ChangeNotifier {
         missionName = json['missionName'],
         createdDate = json['createdDate'],
         createdBy = json['createdBy'],
-        description = json['description'];
+        description = json['description'],
+        targetDate = json['targetDate'];
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
@@ -30,6 +35,7 @@ class Mission with ChangeNotifier {
     data['createdDate'] = createdDate;
     data['createdBy'] = createdBy;
     data['description'] = description;
+    data['targetDate'] = targetDate;
     return data;
   }
 }

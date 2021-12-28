@@ -4,19 +4,38 @@ import 'package:mission_functionlity/models/task.dart';
 
 class TasksProvider extends ChangeNotifier {
   List<Task> _tasksList = [];
+  List<Task> _DBtasksList = []; //mimics the tasks list
 
-  List<Task> getTasksUsingMissionId(int missionId) =>
-  _dummyTasksList.where((element) => element.missionId == missionId).toList();
+  List<Task> _getTasksUsingMissionId(int missionId) =>
+      _DBtasksList.where((element) => element.missionId == missionId).toList();
+  //
+  TasksProvider() {
+    _DBtasksList = _dummyTasksList;
+  }
 
-  TasksProvider({required int missionId}) {
-    final tasks = getTasksUsingMissionId(missionId);
-    _tasksList = tasks;
+  void waitFunction(int seconds) async {
+    await Future.delayed(Duration(seconds: seconds));
+    notifyListeners();
+  }
+
+  void getTasksForMissionId({required int missionId}) {
+    _tasksList = _getTasksUsingMissionId(missionId);
+    waitFunction(1);
+  }
+
+  double getMissionCompletedPercentage({required int missionId}) {
+    final tasks = _getTasksUsingMissionId(missionId);
+    double sum = 0;
+    for (var element in tasks) {
+      sum += element.taskWeightage;
+    }
+    return sum / 100;
   }
 
   List<Task> get taskList => _tasksList;
 
   void addTaskToList(Task value) {
-    _tasksList.add(value);
+    _DBtasksList.add(value);
     notifyListeners();
   }
 }
@@ -30,15 +49,19 @@ List<Task> _dummyTasksList = [
     missionId: 1,
     taskContent: 'dummyUrl',
     targetDate: 'dummyDate',
-  ),  Task(
-    taskId: 1,
+    taskWeightage: 20,
+  ),
+  Task(
+    taskId: 9,
     taskName: 'Task B',
     createdDate: DateTime.now().toString(),
     createdBy: 'userA',
     missionId: 1,
     taskContent: 'dummyUrl',
     targetDate: 'dummyDate',
-  ),  Task(
+    taskWeightage: 20,
+  ),
+  Task(
     taskId: 2,
     taskName: 'Task C',
     createdDate: DateTime.now().toString(),
@@ -46,7 +69,9 @@ List<Task> _dummyTasksList = [
     missionId: 1,
     taskContent: 'dummyUrl',
     targetDate: 'dummyDate',
-  ),  Task(
+    taskWeightage: 60,
+  ),
+  Task(
     taskId: 3,
     taskName: 'Task D',
     createdDate: DateTime.now().toString(),
@@ -54,7 +79,9 @@ List<Task> _dummyTasksList = [
     missionId: 2,
     taskContent: 'dummyUrl',
     targetDate: 'dummyDate',
-  ),  Task(
+    taskWeightage: 50,
+  ),
+  Task(
     taskId: 4,
     taskName: 'Task E',
     createdDate: DateTime.now().toString(),
@@ -62,7 +89,9 @@ List<Task> _dummyTasksList = [
     missionId: 2,
     taskContent: 'dummyUrl',
     targetDate: 'dummyDate',
-  ),  Task(
+    taskWeightage: 20,
+  ),
+  Task(
     taskId: 5,
     taskName: 'Task F',
     createdDate: DateTime.now().toString(),
@@ -70,5 +99,6 @@ List<Task> _dummyTasksList = [
     missionId: 2,
     taskContent: 'dummyUrl',
     targetDate: 'dummyDate',
+    taskWeightage: 30,
   ),
 ];
