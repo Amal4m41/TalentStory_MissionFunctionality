@@ -12,12 +12,26 @@ import 'package:provider/provider.dart';
 
 class TaskForm extends StatelessWidget {
   final int missionId;
+  final double weightageLeft;
+  final Task?
+      task; //if a task is passed, then it's for editing the details of that task.
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController taskWeightageController = TextEditingController();
 
-  TaskForm({Key? key, required this.missionId}) : super(key: key);
+  TaskForm({
+    Key? key,
+    required this.missionId,
+    required this.weightageLeft,
+    this.task,
+  }) : super(key: key) {
+    if (task != null) {
+      //if a task is passed then populate the text fields with it's values.
+      nameController.text = task!.taskName;
+      taskWeightageController.text = task!.taskWeightage.toString();
+    }
+  }
   // String? photoUrl = null;
 
   // void createTask(BuildContext context, Task data) {
@@ -33,7 +47,7 @@ class TaskForm extends StatelessWidget {
     print(missionId);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create new task'),
+        title: Text(task == null ? 'Create new task' : task!.taskName),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -66,9 +80,11 @@ class TaskForm extends StatelessWidget {
                           border: OutlineInputBorder()),
                       validator: (String? value) {
                         if (value == null || value.trim().isEmpty) {
-                          return "Task name cannot be empty";
-                        } else if (double.parse(value) > 100) {
-                          return "Task cannot have weightage > 100";
+                          return "Task weightage cannot be empty";
+                        } else if (double.parse(value) <= 0) {
+                          return "Task cannot have weightage <= 0";
+                        } else if (double.parse(value) > weightageLeft) {
+                          return "Task cannot have weightage > ${weightageLeft}";
                         }
                         return null;
                       },
@@ -92,7 +108,7 @@ class TaskForm extends StatelessWidget {
                     ),
                     addVerticalSpace(40),
                     RectangularRoundButton(
-                      text: "Create Task",
+                      text: task == null ? "Create Task" : "Update Task",
                       onPressedCallback: () {
                         if (_formKey.currentState!.validate()) {
                           // createTask(

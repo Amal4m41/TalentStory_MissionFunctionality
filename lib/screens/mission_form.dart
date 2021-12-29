@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mission_functionlity/components/rectangular_round_button.dart';
 import 'package:mission_functionlity/models/mission.dart';
+import 'package:mission_functionlity/models/task.dart';
 import 'package:mission_functionlity/models/user.dart';
 import 'package:mission_functionlity/providers/mission_provider.dart';
 import 'package:mission_functionlity/screens/task_form.dart';
@@ -8,21 +9,19 @@ import 'package:mission_functionlity/screens/create_task_screen.dart';
 import 'package:mission_functionlity/utils/widget_functions.dart';
 import 'package:provider/provider.dart';
 
-class MissionForm extends StatelessWidget {
+class MissionForm extends StatefulWidget {
+  @override
+  State<MissionForm> createState() => _MissionFormState();
+}
+
+class _MissionFormState extends State<MissionForm> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
-  // String? photoUrl = null;
 
-  // void createMission(BuildContext context, Mission data) {
-  //   print('data');
-  //   print(data);
-  //   print(data.missionId);
-  //   Provider.of<MissionProvider>(context, listen: false).addMissionToList(data);
-  //   showSnackBarWithNoAction(context, "Created Mission successfully");
-  //   Navigator.pop(context);
-  // }
+  final TextEditingController descriptionController = TextEditingController();
+
+  List<Task>? tasksList;
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +68,7 @@ class MissionForm extends StatelessWidget {
                     addVerticalSpace(40),
                     RectangularRoundButton(
                       text: "Next",
-                      onPressedCallback: () {
+                      onPressedCallback: () async {
                         if (_formKey.currentState!.validate()) {
                           final missionList = Provider.of<MissionProvider>(
                                   context,
@@ -91,28 +90,29 @@ class MissionForm extends StatelessWidget {
                           //   ),
                           // );
 
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ChangeNotifierProvider.value(
-                                          value: Mission(
-                                            missionId: missionList[
-                                                        missionList.length - 1]
-                                                    .missionId +
-                                                1,
-                                            missionName: nameController.text,
-                                            createdDate:
-                                                DateTime.now().toString(),
-                                            createdBy: Provider.of<User>(
-                                                    context,
-                                                    listen: false)
-                                                .name,
-                                            description:
-                                                descriptionController.text,
-                                            targetDate: 'dummyDate',
-                                          ),
-                                          child: CreateTaskScreen())));
+                          tasksList = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ChangeNotifierProvider.value(
+                                value: Mission(
+                                  missionId: missionList[missionList.length - 1]
+                                          .missionId +
+                                      1,
+                                  missionName: nameController.text,
+                                  createdDate: DateTime.now().toString(),
+                                  createdBy:
+                                      Provider.of<User>(context, listen: false)
+                                          .name,
+                                  description: descriptionController.text,
+                                  targetDate: 'dummyDate',
+                                ),
+                                child: CreateTaskScreen(
+                                  tasksList: tasksList,
+                                ),
+                              ),
+                            ),
+                          );
                         }
                       },
                     )
