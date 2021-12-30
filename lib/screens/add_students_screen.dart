@@ -3,6 +3,7 @@ import 'package:mission_functionlity/components/rectangular_round_button.dart';
 import 'package:mission_functionlity/models/user.dart';
 import 'package:mission_functionlity/providers/students_provider.dart';
 import 'package:mission_functionlity/screens/add_students_from_class_screen.dart';
+import 'package:mission_functionlity/screens/add_students_from_username_screen.dart';
 import 'package:mission_functionlity/utils/widget_functions.dart';
 
 class AddStudentsScreen extends StatefulWidget {
@@ -15,6 +16,7 @@ class AddStudentsScreen extends StatefulWidget {
 class _AddStudentsScreenState extends State<AddStudentsScreen> {
   // List<User> missionStudentsList = [];
 
+  //TODO: to accept combination of students from a class and added by username.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +47,19 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
             addVerticalSpace(40),
             RectangularRoundButton(
               text: "Add Students using Username",
-              onPressedCallback: () {},
+              onPressedCallback: () async {
+                List<User>? result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        AddStudentsFromUsernameScreen(),
+                  ),
+                );
+                if (result != null) {
+                  print(result);
+                  Navigator.pop(context, result);
+                }
+              },
             ),
           ],
         ),
