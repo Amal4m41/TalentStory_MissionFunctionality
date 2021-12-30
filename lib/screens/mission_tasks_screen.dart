@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mission_functionlity/components/rectangular_round_button.dart';
 import 'package:mission_functionlity/models/mission.dart';
 import 'package:mission_functionlity/models/task.dart';
 import 'package:mission_functionlity/providers/tasks_provider.dart';
 import 'package:mission_functionlity/screens/task_screen.dart';
+import 'package:mission_functionlity/utils/widget_functions.dart';
 import 'package:provider/provider.dart';
+
+import 'mission_students_screen.dart';
 
 class MissionTasksScreen extends StatefulWidget {
   const MissionTasksScreen({Key? key}) : super(key: key);
@@ -35,25 +39,46 @@ class _MissionTasksScreenState extends State<MissionTasksScreen> {
         title: Text('Tasks'),
       ),
       body: Container(
-        child: ListView.separated(
-          padding: const EdgeInsets.only(bottom: 25),
-          itemCount: tasksList.length,
-          itemBuilder: (context, index) => InkWell(
-            onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ChangeNotifierProvider<Task>.value(
-                        value: tasksList[index], child: TaskScreen()))),
-            child: ListTile(
-              leading: Icon(Icons.timer),
-              title: Text(tasksList[index].taskName),
-              // trailing: Text(
-              //     'Created on : ${missionListProvider.missionList[index].createdDate.split(' ')[0]}'),
-              subtitle: Text('Target Date: ${tasksList[index].targetDate}'),
-              trailing: Text(tasksList[index].taskWeightage.toString()),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.only(bottom: 25),
+                itemCount: tasksList.length,
+                itemBuilder: (context, index) => InkWell(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ChangeNotifierProvider<Task>.value(
+                                  value: tasksList[index],
+                                  child: TaskScreen()))),
+                  child: ListTile(
+                    leading: Icon(Icons.timer),
+                    title: Text(tasksList[index].taskName),
+                    // trailing: Text(
+                    //     'Created on : ${missionListProvider.missionList[index].createdDate.split(' ')[0]}'),
+                    subtitle:
+                        Text('Target Date: ${tasksList[index].targetDate}'),
+                    trailing: Text(tasksList[index].taskWeightage.toString()),
+                  ),
+                ),
+                separatorBuilder: (BuildContext context, int index) =>
+                    Divider(),
+              ),
             ),
-          ),
-          separatorBuilder: (BuildContext context, int index) => Divider(),
+            RectangularRoundButton(
+              text: 'See assigned students',
+              onPressedCallback: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MissionStudentsScreen(
+                            missionId: mission.missionId)));
+              },
+            ),
+            addVerticalSpace(20),
+          ],
         ),
       ),
     );

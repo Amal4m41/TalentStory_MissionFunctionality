@@ -4,11 +4,15 @@ class User with ChangeNotifier {
   final String username;
   final String name;
   final String category;
+  final String schoolName;
+  final int userClass;
 
   User({
     required this.username,
     required this.name,
     required this.category,
+    required this.schoolName,
+    required this.userClass,
   });
 
   // int username;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mission_functionlity/models/user.dart';
 import 'package:mission_functionlity/providers/mission_provider.dart';
+import 'package:mission_functionlity/providers/students_provider.dart';
 import 'package:mission_functionlity/providers/tasks_provider.dart';
 import 'package:mission_functionlity/screens/homepage.dart';
 import 'package:provider/provider.dart';
@@ -15,10 +16,15 @@ void main() {
         create: (BuildContext context) => User(
             username: 'dummyUsername',
             name: 'Amal',
+            userClass: 0,
+            schoolName: 'ABC',
             category: 'mentor'), //mimics the signed in user.
       ),
       ChangeNotifierProvider(
         create: (BuildContext context) => TasksProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (BuildContext context) => StudentsProvider(),
       ),
     ],
     child: const MyApp(),
