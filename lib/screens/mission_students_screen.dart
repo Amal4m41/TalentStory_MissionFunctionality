@@ -36,9 +36,13 @@ class _MissionStudentsScreenState extends State<MissionStudentsScreen> {
         child: ListView.builder(
           itemCount: studentsList.length,
           itemBuilder: (context, index) => ListTile(
+            leading: Icon(Icons.person),
             title: Text(studentsList[index].name),
-            subtitle: Text('Username: ${studentsList[index].username}'),
-            trailing: Text(studentsList[index].userClass.toString()),
+            subtitle: Text(
+                'Username: ${studentsList[index].username}\nClass: ${studentsList[index].userClass.toString()}'),
+            isThreeLine: true,
+            trailing:
+                Text("0%"), //static text for the progress of each student.
           ),
         ),
       ),

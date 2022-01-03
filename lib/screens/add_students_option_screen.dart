@@ -6,17 +6,18 @@ import 'package:mission_functionlity/screens/add_students_from_class_screen.dart
 import 'package:mission_functionlity/screens/add_students_from_username_screen.dart';
 import 'package:mission_functionlity/utils/widget_functions.dart';
 
-class AddStudentsScreen extends StatefulWidget {
-  const AddStudentsScreen({Key? key}) : super(key: key);
+class AddStudentsOptionScreen extends StatefulWidget {
+  const AddStudentsOptionScreen({Key? key}) : super(key: key);
 
   @override
-  State<AddStudentsScreen> createState() => _AddStudentsScreenState();
+  State<AddStudentsOptionScreen> createState() =>
+      _AddStudentsOptionScreenState();
 }
 
-class _AddStudentsScreenState extends State<AddStudentsScreen> {
+class _AddStudentsOptionScreenState extends State<AddStudentsOptionScreen> {
   // List<User> missionStudentsList = [];
 
-  //TODO: to accept combination of students from a class and added by username.
+  //TODO: to accept combination of students from a class and added by username(still in doubt about the feature).
   @override
   Widget build(BuildContext context) {
     return Scaffold(
