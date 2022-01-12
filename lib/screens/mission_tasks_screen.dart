@@ -1,38 +1,35 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mission_functionlity/components/rectangular_round_button.dart';
+import 'package:mission_functionlity/logic/mission_tasks_api.dart';
 import 'package:mission_functionlity/models/mission.dart';
 import 'package:mission_functionlity/models/task.dart';
-import 'package:mission_functionlity/providers/tasks_provider.dart';
-import 'package:mission_functionlity/screens/task_screen.dart';
+import 'package:mission_functionlity/screens/task_content_screen.dart';
 import 'package:mission_functionlity/utils/widget_functions.dart';
 import 'package:provider/provider.dart';
 
 import 'mission_students_screen.dart';
 
 class MissionTasksScreen extends StatefulWidget {
-  const MissionTasksScreen({Key? key}) : super(key: key);
+  final Mission mission;
+  const MissionTasksScreen({Key? key, required this.mission}) : super(key: key);
   @override
   State<MissionTasksScreen> createState() => _MissionTasksScreenState();
 }
 
 class _MissionTasksScreenState extends State<MissionTasksScreen> {
-  late final Mission mission;
+  late List<Task> _tasksList;
 
   @override
   void initState() {
     super.initState();
-    mission = Provider.of<Mission>(context, listen: false);
-    Provider.of<TasksProvider>(context, listen: false)
-        .getTasksForMissionId(missionId: mission.missionId);
+    _tasksList = MissionTasksApi()
+        .getTasksForMissionId(missionId: widget.mission.missionId);
   }
 
   @override
   Widget build(BuildContext context) {
     print('MISSION TASKS SCREEN BUILD');
-
-    final tasksProvider = Provider.of<TasksProvider>(context);
-    final tasksList = tasksProvider.taskList;
 
     return Scaffold(
       appBar: AppBar(
@@ -44,23 +41,23 @@ class _MissionTasksScreenState extends State<MissionTasksScreen> {
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.only(bottom: 25),
-                itemCount: tasksList.length,
+                itemCount: _tasksList.length,
                 itemBuilder: (context, index) => InkWell(
                   onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
                               ChangeNotifierProvider<Task>.value(
-                                  value: tasksList[index],
-                                  child: TaskScreen()))),
+                                  value: _tasksList[index],
+                                  child: TaskContentScreen()))),
                   child: ListTile(
                     leading: Icon(Icons.timer),
-                    title: Text(tasksList[index].taskName),
+                    title: Text(_tasksList[index].taskName),
                     // trailing: Text(
                     //     'Created on : ${missionListProvider.missionList[index].createdDate.split(' ')[0]}'),
                     subtitle:
-                        Text('Target Date: ${tasksList[index].targetDate}'),
-                    trailing: Text(tasksList[index].taskWeightage.toString()),
+                        Text('Target Date: ${_tasksList[index].targetDate}'),
+                    trailing: Text(_tasksList[index].taskWeightage.toString()),
                   ),
                 ),
                 separatorBuilder: (BuildContext context, int index) =>
@@ -74,7 +71,7 @@ class _MissionTasksScreenState extends State<MissionTasksScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => MissionStudentsScreen(
-                            missionId: mission.missionId)));
+                            missionId: widget.mission.missionId)));
               },
             ),
             addVerticalSpace(20),

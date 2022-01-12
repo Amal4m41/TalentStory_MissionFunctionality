@@ -2,8 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mission_functionlity/components/rectangular_round_button.dart';
+import 'package:mission_functionlity/logic/mission_students_api.dart';
+import 'package:mission_functionlity/main.dart';
 import 'package:mission_functionlity/models/user.dart';
-import 'package:mission_functionlity/providers/students_provider.dart';
 import 'package:mission_functionlity/utils/widget_functions.dart';
 import 'package:provider/provider.dart';
 
@@ -20,18 +21,13 @@ class _AddStudentsFromClassState extends State<AddStudentsFromClass> {
   bool isShowStudentsList = false;
 
   List<User> getClassStudentsList(int classValue) {
-    return studentsData
-        .where((element) =>
-            element.schoolName ==
-                Provider.of<User>(context, listen: false).schoolName &&
-            element.userClass == classValue)
-        .toList();
+    return MissionStudentsApi().getClassStudentsList(classValue);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(Provider.of<User>(context).schoolName)),
+      appBar: AppBar(title: Text(globalUser.schoolName)),
       body: Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

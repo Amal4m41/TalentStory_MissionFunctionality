@@ -4,41 +4,36 @@ import 'package:mission_functionlity/models/mission.dart';
 import 'package:mission_functionlity/models/mission_studentuser.dart';
 import 'package:mission_functionlity/models/task.dart';
 import 'package:mission_functionlity/models/user.dart';
-import 'package:mission_functionlity/providers/mission_provider.dart';
-import 'package:mission_functionlity/providers/students_provider.dart';
-import 'package:mission_functionlity/providers/tasks_provider.dart';
 import 'package:mission_functionlity/screens/missions_screen.dart';
-import 'package:mission_functionlity/screens/task_form.dart';
+import 'package:mission_functionlity/screens/create_task_form.dart';
 import 'package:mission_functionlity/utils/constants.dart';
 import 'package:mission_functionlity/utils/global_methods.dart';
 import 'package:mission_functionlity/utils/widget_functions.dart';
-import 'package:provider/provider.dart';
 
 import 'add_students_option_screen.dart';
 
-//TODO: To add functionality to assign students, let authorized people create new tasks.
-class CreateTaskScreen extends StatefulWidget {
+//Screen to view, edit, delete from the list of tasks (Before storing in db, during the creation process).
+class CreateTaskMainScreen extends StatefulWidget {
   final List<Task>? tasksList;
   final int missionId;
-  const CreateTaskScreen({
+  const CreateTaskMainScreen({
     Key? key,
     required this.tasksList,
     required this.missionId,
   }) : super(key: key);
 
   @override
-  State<CreateTaskScreen> createState() => _CreateTaskScreenState();
+  State<CreateTaskMainScreen> createState() => _CreateTaskMainScreenState();
 }
 
-class _CreateTaskScreenState extends State<CreateTaskScreen> {
-  List<Task> tasksList = [];
-  List<User> missionStudentsList = [];
+class _CreateTaskMainScreenState extends State<CreateTaskMainScreen> {
+  List<Task> _tasksList = [];
   // double maxMissionWeightage = 100;
 
   double computeWeightageLeft([double subtractValue = 0]) {
     double sum = 0 - subtractValue;
-    for (int i = 0; i < tasksList.length; i++) {
-      sum += tasksList[i].taskWeightage;
+    for (int i = 0; i < _tasksList.length; i++) {
+      sum += _tasksList[i].taskWeightage;
     }
     return 100 - sum;
   }
@@ -47,7 +42,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   void initState() {
     super.initState();
     if (widget.tasksList != null) {
-      tasksList = widget.tasksList!;
+      _tasksList = widget.tasksList!;
     }
   }
 
@@ -59,7 +54,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       onWillPop: () {
         // print('POPPED');
         Navigator.pop(context, {
-          "tasks": tasksList,
+          "tasks": _tasksList,
           "isTasksDone": computeWeightageLeftValue == 0
         });
         return Future.value(false);
@@ -71,7 +66,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         body: Container(
           child: ListView.separated(
             padding: const EdgeInsets.only(bottom: 25),
-            itemCount: tasksList.length,
+            itemCount: _tasksList.length,
             itemBuilder: (context, index) => Dismissible(
               background: Container(
                 color: Colors.redAccent,
@@ -79,9 +74,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               key: UniqueKey(),
               onDismissed: (direction) {
                 showSnackBarWithNoAction(
-                    context, 'Deleted task: ${tasksList[index].taskName}');
+                    context, 'Deleted task: ${_tasksList[index].taskName}');
                 setState(() {
-                  tasksList.removeAt(index);
+                  _tasksList.removeAt(index);
                 });
               },
               child: InkWell(
@@ -89,26 +84,27 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                   Task? result = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => TaskForm(
+                      builder: (context) => CreateTaskForm(
                           missionId: widget.missionId,
                           weightageLeft: computeWeightageLeft(
-                              tasksList[index].taskWeightage),
-                          task: tasksList[index]),
+                              _tasksList[index].taskWeightage),
+                          task: _tasksList[index]),
                     ),
                   );
                   if (result != null) {
                     setState(() {
-                      tasksList[index] = result;
+                      _tasksList[index] = result;
                     });
                   }
                 },
                 child: ListTile(
                   leading: Icon(Icons.edit),
-                  title: Text(tasksList[index].taskName),
+                  title: Text(_tasksList[index].taskName),
                   // trailing: Text(
                   //     'Created on : ${missionListProvider.missionList[index].createdDate.split(' ')[0]}'),
-                  subtitle: Text('Target Date: ${tasksList[index].targetDate}'),
-                  trailing: Text(tasksList[index].taskWeightage.toString()),
+                  subtitle:
+                      Text('Target Date: ${_tasksList[index].targetDate}'),
+                  trailing: Text(_tasksList[index].taskWeightage.toString()),
                 ),
               ),
             ),
@@ -126,17 +122,17 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               Task? result = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => TaskForm(
+                      builder: (context) => CreateTaskForm(
                           missionId: widget.missionId,
                           weightageLeft: computeWeightageLeftValue)));
               if (result != null) {
                 setState(() {
-                  tasksList.add(result);
+                  _tasksList.add(result);
                 });
               }
             } else {
               Navigator.pop(context, {
-                "tasks": tasksList,
+                "tasks": _tasksList,
                 "isTasksDone": computeWeightageLeftValue == 0
               });
             }

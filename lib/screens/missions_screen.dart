@@ -1,23 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mission_functionlity/logic/mission_api.dart';
+import 'package:mission_functionlity/main.dart';
 import 'package:mission_functionlity/models/mission.dart';
 import 'package:mission_functionlity/models/user.dart';
-import 'package:mission_functionlity/providers/create_new_mission_provider.dart';
-import 'package:mission_functionlity/providers/mission_provider.dart';
-import 'package:mission_functionlity/providers/tasks_provider.dart';
-import 'package:mission_functionlity/screens/mission_form.dart';
-import 'package:mission_functionlity/screens/create_task_screen.dart';
+import 'package:mission_functionlity/screens/create_mission_form.dart';
+import 'package:mission_functionlity/screens/create_task_main_screen.dart';
 import 'package:mission_functionlity/screens/mission_tasks_screen.dart';
 import 'package:mission_functionlity/utils/constants.dart';
-import 'package:provider/provider.dart';
 
-class MissionsScreen extends StatelessWidget {
+class MissionsScreen extends StatefulWidget {
   const MissionsScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MissionsScreen> createState() => _MissionsScreenState();
+}
+
+class _MissionsScreenState extends State<MissionsScreen> {
+  late List<Mission> _missionsList;
+  bool isLoading =
+      false; //to display loading while the data is being fetched from the api.
+
+  //This would be an async call later.
+  List<Mission> getLatestMissionsList() => MissionApi().getAllMissions();
+
+  @override
+  void initState() {
+    _missionsList = getLatestMissionsList();
+  }
 
   @override
   Widget build(BuildContext context) {
     print('MISSION SCREEN BUILD');
-    final missionListProvider = Provider.of<MissionProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -26,13 +40,10 @@ class MissionsScreen extends StatelessWidget {
       body: Container(
         child: ListView.separated(
           padding: const EdgeInsets.only(bottom: 25),
-          itemCount: missionListProvider.missionList.length,
+          itemCount: _missionsList.length,
           itemBuilder: (context, index) {
             print("BUILD TASK ITEM $index");
-            double percent = Provider.of<TasksProvider>(context)
-                .getMissionCompletedPercentage(
-                    missionId:
-                        missionListProvider.missionList[index].missionId);
+            double percent = 0;
             percent = double.parse(percent.toStringAsFixed(2));
             return ListTile(
               leading: Stack(children: [
@@ -45,12 +56,12 @@ class MissionsScreen extends StatelessWidget {
                   color: Colors.yellow.shade800.withOpacity(percent),
                 ),
               ]),
-              title: Text(missionListProvider.missionList[index].missionName),
+              title: Text(_missionsList[index].missionName),
               // trailing: Text(
               //     'Created on : ${missionListProvider.missionList[index].createdDate.split(' ')[0]}'),
               subtitle: Text(
-                  missionListProvider.missionList[index].description +
-                      '\nTarget date: ${missionListProvider.missionList[index].targetDate}',
+                  _missionsList[index].description +
+                      '\nTarget date: ${_missionsList[index].targetDate}',
                   style: TextStyle(fontSize: 12)),
               trailing: Text(
                 'Completed: ${percent * 100}%',
@@ -76,27 +87,22 @@ class MissionsScreen extends StatelessWidget {
               onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MultiProvider(providers: [
-                            ChangeNotifierProvider<Mission>.value(
-                              value: missionListProvider.missionList[
-                                  index], //mimics the signed in user.
-                            ),
-                          ], child: MissionTasksScreen()))),
+                      builder: (context) => MissionTasksScreen(
+                            mission: _missionsList[index],
+                          ))),
             );
           },
           separatorBuilder: (BuildContext context, int index) => Divider(),
         ),
       ),
       floatingActionButton: authorizedCategoriesToCreateMission
-              .contains(Provider.of<User>(context).category.toLowerCase())
+              .contains(globalUser.category.toLowerCase())
           ? FloatingActionButton(
               onPressed: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ChangeNotifierProvider(
-                            create: (context) => CreateNewMissionProvider(),
-                            child: MissionForm())));
+                        builder: (context) => CreateMissionForm()));
               },
               child: const Icon(Icons.add))
           : null,

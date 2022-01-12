@@ -1,28 +1,30 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:mission_functionlity/logic/mission_api.dart';
+import 'package:mission_functionlity/logic/mission_students_api.dart';
+import 'package:mission_functionlity/logic/mission_tasks_api.dart';
 import 'package:mission_functionlity/models/mission.dart';
 import 'package:mission_functionlity/models/mission_studentuser.dart';
 import 'package:mission_functionlity/models/task.dart';
 import 'package:mission_functionlity/models/user.dart';
-import 'package:mission_functionlity/providers/mission_provider.dart';
-import 'package:mission_functionlity/providers/students_provider.dart';
-import 'package:mission_functionlity/providers/tasks_provider.dart';
 import 'package:mission_functionlity/screens/add_students_main_screen.dart';
 import 'package:mission_functionlity/utils/global_methods.dart';
 import 'package:mission_functionlity/utils/widget_functions.dart';
 import 'package:provider/provider.dart';
 
 import 'add_students_option_screen.dart';
-import 'create_task_screen.dart';
+import 'create_task_main_screen.dart';
 import 'missions_screen.dart';
 
 class CreateMissionMainScreen extends StatefulWidget {
   final List<Task>? taskList;
   final List<User>? studentsList;
   final bool? isTasksDone;
+  final Mission mission;
 
   const CreateMissionMainScreen({
     Key? key,
+    required this.mission,
     required this.studentsList,
     required this.taskList,
     required this.isTasksDone,
@@ -51,28 +53,24 @@ class _CreateMissionMainScreenState extends State<CreateMissionMainScreen> {
         subtitle: 'Once created, the Mission or it\'s Tasks cannot be edited.',
         onPressedTrue: () {
           //Add the mission
-          Provider.of<MissionProvider>(context, listen: false)
-              .addMissionToList(mission);
+          MissionApi().createMission(mission);
 
-          //Add students for the mission
+          // Add/Assign students for the mission
           List<MissionStudentUser> missionStudents = [];
           for (var i in _studentsList) {
             missionStudents.add(MissionStudentUser(
                 studentUserName: i.username, missionId: mission.missionId));
             print(i.username);
           }
-          Provider.of<StudentsProvider>(context, listen: false)
-              .addMissionStudentUsers(missionStudents);
+          MissionStudentsApi().addMissionStudentUsers(missionStudents);
 
           //Add tasks for the mission.
-          for (var i in _tasksList) {
-            Provider.of<TasksProvider>(context, listen: false).addTaskToList(i);
+          MissionTasksApi().createTasks(_tasksList);
 
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => MissionsScreen()),
-                (route) => route.isFirst);
-          }
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => MissionsScreen()),
+              (route) => route.isFirst);
         },
         onPressedFalse: () {},
       );
@@ -97,8 +95,7 @@ class _CreateMissionMainScreenState extends State<CreateMissionMainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final mission = Provider.of<Mission>(context);
-    print(mission.missionId);
+    print(widget.mission.missionId);
     return WillPopScope(
       onWillPop: () {
         // print('POPPED');
@@ -117,7 +114,7 @@ class _CreateMissionMainScreenState extends State<CreateMissionMainScreen> {
                   ? [
                       InkWell(
                         onTap: () {
-                          createNewMission(mission: mission);
+                          createNewMission(mission: widget.mission);
                         },
                         child: const Padding(
                           padding: EdgeInsets.all(8.0),
@@ -145,8 +142,9 @@ class _CreateMissionMainScreenState extends State<CreateMissionMainScreen> {
                   Map<String, dynamic>? result = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CreateTaskScreen(
-                          tasksList: _tasksList, missionId: mission.missionId),
+                      builder: (context) => CreateTaskMainScreen(
+                          tasksList: _tasksList,
+                          missionId: widget.mission.missionId),
                     ),
                   );
 

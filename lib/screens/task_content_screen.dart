@@ -3,8 +3,8 @@ import 'package:mission_functionlity/utils/widget_functions.dart';
 import 'package:provider/provider.dart';
 import 'package:mission_functionlity/models/task.dart';
 
-class TaskScreen extends StatelessWidget {
-  const TaskScreen({Key? key}) : super(key: key);
+class TaskContentScreen extends StatelessWidget {
+  const TaskContentScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

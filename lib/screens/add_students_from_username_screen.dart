@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:mission_functionlity/components/rectangular_round_button.dart';
+import 'package:mission_functionlity/logic/mission_students_api.dart';
 import 'package:mission_functionlity/models/user.dart';
-import 'package:mission_functionlity/providers/students_provider.dart';
 import 'package:mission_functionlity/utils/widget_functions.dart';
 
 class AddStudentsFromUsernameScreen extends StatefulWidget {
@@ -38,8 +38,9 @@ class _AddStudentsFromUsernameScreenState
                           style: TextStyle(fontSize: 15),
                           decoration:
                               InputDecoration(border: OutlineInputBorder())),
-                      suggestionsCallback: (pattern) => studentsData.where(
-                          (element) => element.username
+                      suggestionsCallback: (pattern) => MissionStudentsApi()
+                          .getAllStudents
+                          .where((element) => element.username
                               .toLowerCase()
                               .contains(pattern.toLowerCase())),
                       itemBuilder: (context, User suggestion) {

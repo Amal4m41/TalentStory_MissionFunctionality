@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mission_functionlity/components/rectangular_round_button.dart';
 import 'package:mission_functionlity/models/user.dart';
-import 'package:mission_functionlity/providers/students_provider.dart';
 import 'package:mission_functionlity/screens/add_students_from_class_screen.dart';
 import 'package:mission_functionlity/screens/add_students_from_username_screen.dart';
 import 'package:mission_functionlity/utils/widget_functions.dart';

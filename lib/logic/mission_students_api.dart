@@ -1,43 +1,41 @@
-import 'package:flutter/cupertino.dart';
 import 'package:mission_functionlity/models/mission_studentuser.dart';
 import 'package:mission_functionlity/models/user.dart';
 
-class StudentsProvider with ChangeNotifier {
-  List<MissionStudentUser> _missionStudentsListData = [];
-  List<User> _studentsListData = [];
+import '../main.dart';
 
-  StudentsProvider() {
-    _missionStudentsListData = missionStudentData;
-    _studentsListData = studentsData;
-  }
-
-  get missionStudentsListData => _missionStudentsListData;
-  get studentsListData => _studentsListData;
-
+class MissionStudentsApi {
   void addMissionStudentUsers(List<MissionStudentUser> students) {
     for (int i = 0; i < students.length; i++) {
-      _missionStudentsListData.add(students[i]);
+      _globalMissionStudentData.add(students[i]);
     }
+  }
 
-    notifyListeners();
+  List<User> get getAllStudents => _globalStudentsData;
+
+  List<User> getClassStudentsList(int classValue) {
+    return _globalStudentsData
+        .where((student) =>
+            student.schoolName == globalUser.schoolName &&
+            student.userClass == classValue)
+        .toList();
   }
 
   List<User> getStudentsListUsingMissionId(int missionId) {
     List<MissionStudentUser> missionStudents =
-        _missionStudentsListData.where((element) {
+        _globalMissionStudentData.where((element) {
       return element.missionId == missionId;
     }).toList();
 
-    for (int i = 0; i < missionStudents.length; i++) {
-      print(missionStudents[i]);
-    }
+    // for (int i = 0; i < missionStudents.length; i++) {
+    //   print(missionStudents[i]);
+    // }
 
     List<User> result = [];
     for (int i = 0; i < missionStudents.length; i++) {
-      for (int j = 0; j < _studentsListData.length; j++) {
+      for (int j = 0; j < _globalStudentsData.length; j++) {
         if (missionStudents[i].studentUserName ==
-            _studentsListData[j].username) {
-          result.add(_studentsListData[j]);
+            _globalStudentsData[j].username) {
+          result.add(_globalStudentsData[j]);
         }
       }
     }
@@ -48,7 +46,8 @@ class StudentsProvider with ChangeNotifier {
   }
 }
 
-List<User> studentsData = [
+//Mimics the user table(filtered as category = student) in the database.
+List<User> _globalStudentsData = [
   User(
       username: 'Messi123',
       name: 'Messi',
@@ -93,7 +92,7 @@ List<User> studentsData = [
       userClass: 10),
 ];
 
-List<MissionStudentUser> missionStudentData = [
+List<MissionStudentUser> _globalMissionStudentData = [
   MissionStudentUser(studentUserName: 'Messi123', missionId: 1),
   MissionStudentUser(studentUserName: 'Neymari123', missionId: 1),
   MissionStudentUser(studentUserName: 'Zlatan52', missionId: 1),

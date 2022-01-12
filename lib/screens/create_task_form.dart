@@ -2,15 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:mission_functionlity/components/rectangular_round_button.dart';
+import 'package:mission_functionlity/main.dart';
 import 'package:mission_functionlity/models/mission.dart';
 import 'package:mission_functionlity/models/task.dart';
 import 'package:mission_functionlity/models/user.dart';
-import 'package:mission_functionlity/providers/mission_provider.dart';
-import 'package:mission_functionlity/providers/tasks_provider.dart';
 import 'package:mission_functionlity/utils/widget_functions.dart';
-import 'package:provider/provider.dart';
 
-class TaskForm extends StatelessWidget {
+class CreateTaskForm extends StatelessWidget {
   final int missionId;
   final double weightageLeft;
   final Task?
@@ -20,7 +18,7 @@ class TaskForm extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController taskWeightageController = TextEditingController();
 
-  TaskForm({
+  CreateTaskForm({
     Key? key,
     required this.missionId,
     required this.weightageLeft,
@@ -135,9 +133,7 @@ class TaskForm extends StatelessWidget {
                               taskId: Random().nextInt(200) + 1,
                               taskName: nameController.text,
                               createdDate: DateTime.now().toString(),
-                              createdBy:
-                                  Provider.of<User>(context, listen: false)
-                                      .name,
+                              createdBy: globalUser.username,
                               taskContent: 'dummyURL',
                               targetDate: 'dummyDate',
                               missionId: missionId,

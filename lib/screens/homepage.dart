@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'missions_screen.dart';
 
 class HomePage extends StatelessWidget {

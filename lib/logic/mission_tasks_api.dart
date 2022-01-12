@@ -1,26 +1,18 @@
-import 'package:flutter/cupertino.dart';
-import 'package:mission_functionlity/models/mission.dart';
 import 'package:mission_functionlity/models/task.dart';
 
-class TasksProvider extends ChangeNotifier {
-  List<Task> _tasksList = [];
-  List<Task> _DBtasksList = []; //mimics the tasks list
+class MissionTasksApi {
+  // void waitFunction(int seconds) async {
+  //   await Future.delayed(Duration(seconds: seconds));
+  //   notifyListeners();
+  // }
 
-  List<Task> _getTasksUsingMissionId(int missionId) =>
-      _DBtasksList.where((element) => element.missionId == missionId).toList();
-  //
-  TasksProvider() {
-    _DBtasksList = _dummyTasksList;
-  }
+  List<Task> _getTasksUsingMissionId(int missionId) => _globalTasksList
+      .where((element) => element.missionId == missionId)
+      .toList();
 
-  void waitFunction(int seconds) async {
-    await Future.delayed(Duration(seconds: seconds));
-    notifyListeners();
-  }
-
-  void getTasksForMissionId({required int missionId}) {
-    _tasksList = _getTasksUsingMissionId(missionId);
-    waitFunction(1);
+  List<Task> getTasksForMissionId({required int missionId}) {
+    return _getTasksUsingMissionId(missionId);
+    // waitFunction(1);
   }
 
   double getMissionCompletedPercentage({required int missionId}) {
@@ -32,15 +24,15 @@ class TasksProvider extends ChangeNotifier {
     return sum / 100;
   }
 
-  List<Task> get taskList => _tasksList;
-
-  void addTaskToList(Task value) {
-    _DBtasksList.add(value);
-    notifyListeners();
+  void createTasks(List<Task> tasks) {
+    for (Task i in tasks) {
+      _globalTasksList.add(i);
+    }
   }
 }
 
-List<Task> _dummyTasksList = [
+//Mimics the tasks table in the database.
+List<Task> _globalTasksList = [
   Task(
     taskId: 1,
     taskName: 'Task A',
